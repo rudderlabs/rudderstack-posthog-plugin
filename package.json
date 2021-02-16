@@ -1,0 +1,11 @@
+{
+  "name": "rudderstack-posthog-plugin",
+  "version": "0.0.2",
+  "description": "export data from posthog",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
