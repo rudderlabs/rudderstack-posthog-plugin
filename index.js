@@ -295,9 +295,6 @@ async function sendToRudder(global, cache, batch) {
     console.log("fetchWithRetry thrown error: " + err);
     console.log("******storing failed payload in redis*********");
     await cache.set(global.writeKey, JSON.stringify(payload));
-    const storedData = await cache.get(global.writeKey);
-    storedData = JSON.parse(olderBatch);
-    console.log("*****able to fetch stored data*****", storedData);
   }
 }
 
