@@ -1,5 +1,5 @@
 const alias = {
-  userId: "alias",
+  userId: "properties.alias",
   previousId: ["properties.distinct_id"]
 };
 
@@ -29,6 +29,7 @@ const track = {
   event: "event"
 };
 
+// TODO: handle "context.channel" better
 const generic = {
   "context.os.name": "properties.$os",
   "context.browser": "properties.$browser",
@@ -68,6 +69,7 @@ const eventToMapping = {
   $identify: { type: "identify", mapping: identify },
   $create_alias: { type: "alias", mapping: alias },
   $pageview: { type: "page", mapping: page },
+  $page: { type: "page", mapping: page },
   $group: { type: "group", mapping: group },
   $autocapture: { type: "track", mapping: autoCapture },
   default: { type: "track", mapping: track }
