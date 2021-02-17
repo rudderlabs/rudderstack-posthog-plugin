@@ -250,7 +250,7 @@ async function processEventBatch(events, { config, cache, global }) {
       ) {
         set(
           rudderPayload,
-          `"properties."${propKey}`,
+          `properties.${propKey}`,
           pHEvent.properties[propKey]
         );
       }
