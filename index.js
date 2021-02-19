@@ -290,7 +290,8 @@ async function sendToRudder(global, cache, batch) {
       "POST"
     );
     console.log(
-      "****success sending payload to Rudder server, deleting any cached data******"
+      "***sending payload to Rudder server gave a response, deleting any cached data******" +
+        res.status
     );
     await cache.expire(global.writeKey, 0);
   } catch (err) {
@@ -317,7 +318,7 @@ async function fetchWithRetry(
     const body = await res.text();
     console.log("response: " + res.statusText + " " + body);
     console.log("is response ok: ", res.ok);
-    if (!res.ok) {
+    if (!res.ok && isErrorRetryable(res.status)) {
       throw new Error(
         `${method} request to ${url} failed with ${res.status} ${res.statusText}`
       );
@@ -341,6 +342,16 @@ async function fetchWithRetry(
     console.log("response: " + res.statusText + " " + body);
     return res;
   }
+}
+
+function isErrorRetryable(status) {
+  if (status >= 500 && status <= 599) {
+    return true;
+  }
+  if (status === 429) {
+    return true;
+  }
+  return false;
 }
 
 function constructPayload(outPayload, inPayload, mapping) {
