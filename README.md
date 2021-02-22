@@ -10,11 +10,8 @@
 
 #  RudderStack PostHog Plugin
 
-  
-
-**To send events from your PostHog instance to RudderStack.**
-
-|:------|
+  | **Send events from your PostHog instance to RudderStack** |
+| :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 
   
 
@@ -27,7 +24,7 @@ Questions? Please join our [Slack channel](https://resources.rudderstack.com/joi
  ![PH-init](https://github.com/rudderlabs/rudderstack-posthog-plugin/blob/master/images/PH-init.png)
  - After adding the source, it should look something like
   ![PH-source](https://github.com/rudderlabs/rudderstack-posthog-plugin/blob/master/images/PH-source.png)
- - Get the source write-key and your Rudder server URL.
+ - Get the source `write-key` and your `Rudder server URL`.
  - Copy the this repo URL.
  - Go to your PostHog dashboard, add a custom plugin with the above copied repo URL.
   ![PH-plugin](https://github.com/rudderlabs/rudderstack-posthog-plugin/blob/master/images/Screenshot%202021-02-22%20at%207.49.50%20PM.png)
@@ -35,7 +32,7 @@ Questions? Please join our [Slack channel](https://resources.rudderstack.com/joi
  ![PH-plugin-config](https://github.com/rudderlabs/rudderstack-posthog-plugin/blob/master/images/Screenshot%202021-02-22%20at%207.50.55%20PM.png)
  - Finally, enable this plugin and you should start seeing events sent to your PostHog instance flowing to the Rudder source created above.
 
-  
+  For more info on PostHog plugins, check [this](https://posthog.com/docs/plugins/overview).
 
 # License
 
