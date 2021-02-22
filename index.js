@@ -29,6 +29,11 @@ const track = {
   event: "event"
 };
 
+const constants = {
+  "context.app.name": "PostHogPlugin",
+  channel: "s2s"
+};
+
 // TODO: handle "context.channel" better
 const generic = {
   "context.os.name": "properties.$os",
@@ -39,12 +44,14 @@ const generic = {
   "context.page.referrer": "properties.$referrer",
   "context.page.initial_referrer": "properties.$initial_referrer",
   "context.page.referring_domain": "properties.$referring_domain",
+  "context.app.version": "properties.posthog_version",
   "context.page.initial_referring_domain":
     "properties.$initial_referring_domain",
   "context.browser_version": "properties.$browser_version",
   "context.screen.height": "properties.$screen_height",
   "context.screen.width": "properties.$screen_width",
-  "context.channel": "properties.$lib",
+  "context.library.name": "properties.$lib",
+  "context.library.version": "properties.$lib_version",
   "context.ip": "ip",
   messageId: "$insert_id",
   originalTimestamp: "sent_at",
@@ -103,6 +110,7 @@ function isObject(val) {
   return val !== null && (typeof val === "object" || typeof val === "function");
 }
 
+// Ref: https://github.com/jonschlinkert/get-value
 function get(target, path, options) {
   if (!isObject(options)) {
     options = { default: options };
@@ -229,6 +237,9 @@ async function processEventBatch(events, { config, cache, global }) {
   events.forEach(pHEvent => {
     console.log(pHEvent);
     let rudderPayload = {};
+    // add const value props
+    constructPayload(rudderPayload, pHEvent, constants, true);
+
     // add generic props
     constructPayload(rudderPayload, pHEvent, generic);
 
@@ -354,11 +365,13 @@ function isErrorRetryable(status) {
   return false;
 }
 
-function constructPayload(outPayload, inPayload, mapping) {
+function constructPayload(outPayload, inPayload, mapping, direct = false) {
   Object.keys(mapping).forEach(rudderKeyPath => {
     let pHKeyPath = mapping[rudderKeyPath];
     let pHKeyVal = undefined;
-    if (Array.isArray(pHKeyPath)) {
+    if (direct) {
+      pHKeyVal = pHKeyPath;
+    } else if (Array.isArray(pHKeyPath)) {
       for (let i = 0; i < pHKeyPath.length; i++) {
         pHKeyVal = get(inPayload, pHKeyPath[i]);
         if (pHKeyVal) {
