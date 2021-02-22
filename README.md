@@ -9,6 +9,7 @@
   
 
 #  RudderStack PostHog Plugin
+<br>
 
   | **Send events from your PostHog instance to RudderStack** |
 | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -16,6 +17,8 @@
   
 
 Questions? Please join our [Slack channel](https://resources.rudderstack.com/join-rudderstack-slack) or read about us on [Product Hunt](https://www.producthunt.com/posts/rudderstack).
+
+<br>
 
   
 ## Get Started
