@@ -29,7 +29,7 @@ Questions? Please join our [Slack channel](https://resources.rudderstack.com/joi
 
  - After adding the source, it should look something like the following:
 
-  ![PH-source](https://github.com/rudderlabs/rudderstack-posthog-plugin/blob/master/images/PH-source.png)
+ ![PH-source](https://user-images.githubusercontent.com/59817155/109136455-2416f100-777e-11eb-83db-342bee7f119b.png)
 
  - Get the source `write-key` and your `RudderStack server URL` (also called the `Data Plane URL`).
  - Copy this repo URL.
