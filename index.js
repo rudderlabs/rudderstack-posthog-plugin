@@ -272,7 +272,7 @@ export async function onEvent(event, { global }) {
     })
 
     // Add event to the buffer which will flush in the background
-    global.buffer.add(rudderPayload)
+    global.buffer.add(rudderPayload, JSON.stringify(rudderPayload).length)
 }
 
 async function sendToRudder(batch, { global, jobs }) {
