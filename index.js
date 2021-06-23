@@ -281,6 +281,7 @@ async function sendToRudder(batch, { global, jobs }) {
             batch: batch.batch,
             sentAt: new Date().toISOString(),
         }
+        console.log(`Inside sendToRudder, current batchId: ${batch.batchId}`)
         await fetch(
             global.dataPlaneUrl,
             {
