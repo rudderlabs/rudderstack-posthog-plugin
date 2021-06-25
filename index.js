@@ -232,7 +232,7 @@ export async function setupPlugin({ config, global, jobs }) {
     global.writeKey = config.writeKey
     global.dataPlaneUrl = config.dataPlaneUrl
 
-    // Setup a buffer to group events to be sent to RudderStack in the background at most every 3s
+    // Setup a buffer to group events to be sent to RudderStack in the background at most every 60s
     global.buffer = createBuffer({
         limit: 5 * 1024 * 1024, // 5mb max
         timeoutSeconds: 60,
