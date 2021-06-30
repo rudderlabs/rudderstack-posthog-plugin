@@ -281,17 +281,14 @@ async function sendToRudder(batch, { global, jobs }) {
             batch: batch.batch,
             sentAt: new Date().toISOString(),
         }
-        await fetch(
-            global.dataPlaneUrl,
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                    ...global.rudderAuthHeader.headers,
-                },
-                body: JSON.stringify(payload),
-                method: 'POST'
-            }
-        )
+        await fetch(global.dataPlaneUrl, {
+            headers: {
+                'Content-Type': 'application/json',
+                ...global.rudderAuthHeader.headers,
+            },
+            body: JSON.stringify(payload),
+            method: 'POST',
+        })
         console.log(`Successfully uploaded events batch ${batch.batchId} of size ${batch.batch.length} to RudderStack`)
     } catch (err) {
         // Retry using exponential backoff based on how many retries were already performed
