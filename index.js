@@ -55,7 +55,7 @@ const generic = {
     'context.library.version': 'properties.$lib_version',
     'context.ip': 'ip',
     messageId: '$insert_id',
-    originalTimestamp: 'sent_at',
+    originalTimestamp: 'timestamp',
     userId: ['$user_id', 'distinct_id'],
     anonymousId: ['properties.$anon_distinct_id', 'properties.$device_id', 'properties.distinct_id'],
     'context.active_feature_flags': 'properties.$active_feature_flags',
