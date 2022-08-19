@@ -1,5 +1,3 @@
-import { createBuffer } from '@posthog/plugin-contrib'
-
 const alias = {
     userId: 'properties.alias',
     previousId: ['properties.distinct_id'],
@@ -210,17 +208,6 @@ function isValidObject(val) {
     return isObject(val) || Array.isArray(val) || typeof val === 'function'
 }
 
-export const jobs = {
-    uploadBatchToRudder: async (batch, meta) => {
-        // We'll retry 15 times using an exponential backoff mechanism
-        // The first retry happens in 3s, and the last in about 50min
-        if (batch.retriesPerformedSoFar >= 15) {
-            return
-        }
-        await sendToRudder(batch, meta)
-    },
-}
-
 export async function setupPlugin({ config, global, jobs }) {
     const rudderBase64AuthToken = Buffer.from(`${config.writeKey}:`).toString('base64')
 
@@ -231,22 +218,26 @@ export async function setupPlugin({ config, global, jobs }) {
     }
     global.writeKey = config.writeKey
     global.dataPlaneUrl = config.dataPlaneUrl
-
-    // Setup a buffer to group events to be sent to RudderStack in the background at most every 60s
-    global.buffer = createBuffer({
-        limit: 5 * 1024 * 1024, // 5mb max
-        timeoutSeconds: 60,
-        onFlush: async (batch) => {
-            await sendToRudder(
-                { batch, retriesPerformedSoFar: 0, batchId: Math.floor(Math.random() * 1000000) }, // This is the first time we're trying to send the payload
-                { global, jobs }
-            )
-        },
-    })
 }
 
-// onEvent is used to export events without modifying them
-export async function onEvent(event, { global }) {
+export async function exportEvents(events, { global }) {
+    const payload = {
+        batch: events.map(constructRudderPayload),
+        sentAt: new Date().toISOString(),
+    }
+
+    await fetch(global.dataPlaneUrl, {
+        headers: {
+            'Content-Type': 'application/json',
+            ...global.rudderAuthHeader.headers,
+        },
+        body: JSON.stringify(payload),
+        method: 'POST',
+    })
+    console.log(`Successfully uploaded ${payload.batch.length} events to RudderStack`)
+}
+
+function constructRudderPayload(event) {
     let rudderPayload = {}
     // add const value props
     constructPayload(rudderPayload, event, constants, true)
@@ -271,37 +262,7 @@ export async function onEvent(event, { global }) {
         }
     })
 
-    // Add event to the buffer which will flush in the background
-    global.buffer.add(rudderPayload, JSON.stringify(rudderPayload).length)
-}
-
-async function sendToRudder(batch, { global, jobs }) {
-    try {
-        const payload = {
-            batch: batch.batch,
-            sentAt: new Date().toISOString(),
-        }
-        await fetch(global.dataPlaneUrl, {
-            headers: {
-                'Content-Type': 'application/json',
-                ...global.rudderAuthHeader.headers,
-            },
-            body: JSON.stringify(payload),
-            method: 'POST',
-        })
-        console.log(`Successfully uploaded events batch ${batch.batchId} of size ${batch.batch.length} to RudderStack`)
-    } catch (err) {
-        // Retry using exponential backoff based on how many retries were already performed
-        const nextRetryMs = 2 ** (batch.retriesPerformedSoFar || 0) * 3000 // 2^0 * 3000 = 3000ms, 2^9 * 3000 = 1,536,000ms
-        console.error(`Error uploading payload to Rudderstack: ${err}`)
-        console.log(`Enqueued batch ${batch.batchId} for retry in ${Math.round(nextRetryMs / 1000)}s`)
-        await jobs
-            .uploadBatchToRudder({
-                ...batch,
-                retriesPerformedSoFar: (batch.retriesPerformedSoFar || 0) + 1,
-            })
-            .runIn(nextRetryMs, 'milliseconds')
-    }
+    return rudderPayload
 }
 
 function constructPayload(outPayload, inPayload, mapping, direct = false) {
